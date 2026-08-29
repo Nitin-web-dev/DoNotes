@@ -101,7 +101,7 @@ app.get("/logout", function(req,res){
 app.get('/home', isLoggedIn, async function(req,res){
   try{
     const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
-    console.log(getDatafromEmail)
+    // console.log(getDatafromEmail)
     res.render("home",{
       userData : getDatafromEmail
     });
