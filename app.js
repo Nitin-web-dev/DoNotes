@@ -6,6 +6,8 @@ const path = require("path");
 const utils = require("./utils/utils.js");
 const connectDB = require("./config/config.js");
 const usersModel = require("./model/usersModel.js");
+const isLoggedIn = require('./middleware/IsLoggedIn.js');
+const islogout = require('./middleware/isLogout.js');
 
 const app = express();
 app.use(cookieParser());
@@ -14,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
-app.get("/SignUp", function (req, res) {
+app.get("/SignUp", islogout,function (req, res) {
   res.render("signup");
 });
 
@@ -50,11 +52,11 @@ app.post("/SignUp", async function (req, res) {
   }
 });
 
-app.get("/login", function (req, res) {
+app.get("/login", islogout,  function (req, res) {
   res.render("login");
 });
 
-app.post("/login", async function (req, res) {
+app.post("/login",   async function (req, res) {
   if (utils.checkIffieldsAreEmpty(req.body)) {
     return res.render("login");
   } else {
@@ -64,7 +66,7 @@ app.post("/login", async function (req, res) {
     console.log(isEmailExist);
     if (!isEmailExist) {
       console.log("user not exist");
-      return res.render("signup");
+       res.redirect("login");
     } else {
       try {
         const { email, password } = req.body;
@@ -74,7 +76,7 @@ app.post("/login", async function (req, res) {
               res.cookie("token", token,{
                 httpOnly: true
               })
-              res.render("home",{userData: isEmailExist});
+              res.redirect("home");
 
             }else{
               return res.redirect('login');
@@ -93,6 +95,23 @@ app.get("/logout", function(req,res){
   res.clearCookie("token");
   res.redirect("/login");
 })
+
+
+
+app.get('/home', isLoggedIn, async function(req,res){
+  try{
+    const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
+    console.log(getDatafromEmail)
+    res.render("home",{
+      userData : getDatafromEmail
+    });
+
+  }catch(error){
+    console.error("something went wrong: ", error.message);
+    res.status(404).send('something went wrong')
+  }
+} )
+
 
 
 const startServer = async () => {
