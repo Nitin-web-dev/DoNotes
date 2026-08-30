@@ -9,7 +9,7 @@ const userSchema =  new mongoose.Schema({
         trim: true
     },
     userEmail : {
-          type: String,
+        type: String,
         required: true,
         trim: true,
         unique: true,
@@ -19,7 +19,14 @@ const userSchema =  new mongoose.Schema({
     hashedPassword: {
         type: String,
         required: true
-    }
+    },
+    todos: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "todos"
+        }
+    ]
+
 
 })
 

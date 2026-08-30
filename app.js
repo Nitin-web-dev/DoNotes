@@ -6,6 +6,7 @@ const path = require("path");
 const utils = require("./utils/utils.js");
 const connectDB = require("./config/config.js");
 const usersModel = require("./model/usersModel.js");
+const todoModel = require("./model/todoModel.js");
 const isLoggedIn = require('./middleware/IsLoggedIn.js');
 const islogout = require('./middleware/isLogout.js');
 
@@ -63,7 +64,7 @@ app.post("/login",   async function (req, res) {
     const isEmailExist = await usersModel.findOne({
       userEmail: req.body.email,
     });
-    console.log(isEmailExist);
+    // console.log(isEmailExist);
     if (!isEmailExist) {
       console.log("user not exist");
        res.redirect("login");
@@ -90,7 +91,6 @@ app.post("/login",   async function (req, res) {
   }
 });
 
-
 app.get("/logout", function(req,res){
   res.clearCookie("token");
   res.redirect("/login");
@@ -98,11 +98,96 @@ app.get("/logout", function(req,res){
 
 
 
+
+
+
 app.get('/home', isLoggedIn, async function(req,res){
   try{
     const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
     // console.log(getDatafromEmail)
+    
+    if (!getDatafromEmail) {
+      return res.status(404).send('User not found');
+    }
+
+    const todos = await todoModel.find({
+      user_id: getDatafromEmail._id
+    })
+
     res.render("home",{
+      userData : getDatafromEmail,
+      todos : todos
+    });
+
+  }catch(error){
+    console.error("something went wrong: ", error.message);
+    res.status(404).send('something went wrong')
+  }
+} )
+
+app.post('/todo',isLoggedIn, async function(req,res){
+  try{
+    const {todoName} = req.body;
+    if(utils.checkIffieldsAreEmpty(req.body)) return res.send('field is empty');
+    const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
+      if (!getDatafromEmail) {
+      return res.status(404).send('User not found');
+    }
+
+    const todoCreated = await todoModel.create({
+      content: todoName,
+      user_id: getDatafromEmail._id
+    })
+    getDatafromEmail.todos.push(todoCreated._id);
+    await getDatafromEmail.save();
+    return res.status(201).redirect('/home');
+   
+
+  }catch(error){
+    console.error("something went wrong: ", error.message);
+    res.status(404).send('something went wrong')
+  }
+})
+
+// todo : update this api to delete it bug when we write delete convert it into delete api it working now but later change it 
+app.get('/todo/delete/:id',isLoggedIn,  async function(req,res){
+
+      const todos = await todoModel.findOneAndDelete({
+      _id: req.params.id
+      })
+ 
+    res.redirect("/home");
+})
+app.patch('/todo/:id',isLoggedIn,  async function(req,res){
+
+  try {
+    const { id } = req.params;
+    const { completed } = req.body;
+
+    await todoModel.findByIdAndUpdate({_id: id}, {
+      completed: completed
+    });
+
+    res.status(201).send({message: "updated "});
+    // redirect('/home');
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+})
+
+
+
+
+
+
+
+
+app.get('/notes', isLoggedIn, async function(req,res){
+  try{
+    const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
+    // console.log(getDatafromEmail)
+    res.render("notes",{
       userData : getDatafromEmail
     });
 
