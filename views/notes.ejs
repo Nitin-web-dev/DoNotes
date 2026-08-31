@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
 </head>
-<body>
+<body class="bg-zinc-800 min-h-screen text-white">
    <header class="bg-white dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
@@ -98,6 +98,90 @@
 </header>
     
 
+
+
+
+
+
+
+<!-- /////// start main section notes  -->
+
+ <div class="max-w-3xl mx-auto px-4 py-10">
+
+    <!-- Form -->
+    <div class="bg-zinc-900 rounded-xl p-6 shadow-lg">
+      <h1 class="text-2xl font-bold mb-6">Create a Note</h1>
+
+      <form action="/notes" method="post">
+        <div class="mb-4">
+          <label for="title" class="block text-sm font-medium mb-2">
+            Title
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Enter title"
+            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 outline-none focus:border-blue-500"
+          />
+        </div>
+
+        <div class="mb-5">
+          <label for="content" class="block text-sm font-medium mb-2">
+            Content
+          </label>
+          <textarea
+            id="content"
+            name="content"
+            rows="5"
+            placeholder="Write your content..."
+            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 outline-none focus:border-blue-500 resize-none"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition"
+        >
+          Add Note
+        </button>
+      </form>
+    </div>
+
+    <!-- Cards -->
+    <div class="mt-8 space-y-5">
+      <% notes.reverse().forEach(function(note){ %>
+      <!-- Card -->
+      <div class="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-700">
+        <h2 class="text-xl font-semibold mb-3">
+          <%= note.title %>
+        </h2>
+
+        <p class=" line-clamp-2 text-zinc-400 leading-6 mb-5">
+    <%= note.content %>
+        </p>
+
+        <div class="flex items-center gap-3">
+          <a href="/notes/readmore/<%= note._id %>"
+            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition"
+          >
+            Read More
+          </a>
+
+          <a
+          href="/notes/delete/<%= note._id %>"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
+          >
+            Delete
+          </a>
+        </div>
+      </div>
+
+    
+       <% }) %>
+    </div>
+
+  </div>
 </body>
 <script src="scripts/script.js"></script>
 </html>

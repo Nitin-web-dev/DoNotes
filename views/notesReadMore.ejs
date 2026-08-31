@@ -7,8 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
 </head>
-<body>
-
+<body class="bg-zinc-800 min-h-screen text-white">
    <header class="bg-white dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
@@ -29,7 +28,7 @@
           </svg>
         </a>
         <h3 class="">hi, <%= userData.userName %></h3>
-             <h3 class="timeAndDate">time and date</h3>
+        <h3 class="timeAndDate">time and date</h3>
       </div>
 
       <div class="hidden md:block">
@@ -99,87 +98,52 @@
 </header>
     
 
-<div  class="bg-zinc-800 min-h-screen text-white" >
-<div class="max-w-2xl mx-auto px-4 py-10">
 
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold ">
-        My Todo List
-      </h1>
-      <p class="text-gray-500 mt-1">
-        Keep track of your tasks
-      </p>
-    </div>
 
-    <!-- Add Todo -->
-    <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
-      <form class="flex gap-3" method="post" action="/todo">
-        <input
-          type="text"
-          name="todoName"
-          placeholder="What needs to be done?"
-          class="flex-1 border border-gray-300 rounded-lg px-4 py-3
-                 outline-none focus:ring-2 focus:ring-blue-500
-                 focus:border-blue-500 text-black"
-        />
 
-        <button
-          type="submit"
-          class="bg-blue-600 text-white px-6 py-3 rounded-lg
-                 font-medium hover:bg-blue-700 transition"
-        >
-          Add
-        </button>
-      </form>
-    </div>
 
-    <!-- Todo List -->
-    <div class="space-y-3">
-     <% todos.forEach(function(todo) { %>
-      <!-- Todo 1 -->
-      <div class="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <input
-            type="checkbox"
-            class="w-5 h-5 accent-blue-600"
-            data-id = "<%= todo._id %>"
-            <%= todo.completed ? 'checked' : '' %>
-          />
 
-          <div>
-            <h3 class="font-medium text-gray-900">
-              <%= todo.content %> 
-            </h3>
-     
-          </div>
-        </div>
 
-        <a href="/todo/delete/<%=todo._id%>"
-          class="text-red-500 hover:text-red-700 font-medium"
-        >
-          Delete
+<!-- /////// start main section notes  -->
+
+ <div class="max-w-3xl mx-auto px-4 py-10">
+
+        <a href="/notes" class="text-blue-800 ">
+            go back
         </a>
+     
+     <h2 class="mt-5 text-3xl">Cards</h2>
+    <div class="mt-8 space-y-5">
+     
+      <!-- Card -->
+      <div class="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-700">
+        <h2 class="text-xl font-semibold mb-3">
+          <%= note.title %>
+        </h2>
+
+        <p class=" text-zinc-400 leading-6 mb-5">
+    <%= note.content %>
+        </p>
+
+        <div class="flex items-center gap-3">
+        
+          <a
+          href="/notes/delete/<%= note._id%>"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
+          >
+            Delete
+          </a>
+        </div>
       </div>
 
-  
-
-   <% }) %>
-
-    </div>
-
-    <!-- Empty state -->
-    <!--
-    <div class="bg-white rounded-xl p-10 text-center shadow-sm">
-      <p class="text-gray-500">
-        No todos yet. Add your first todo!
-      </p>
-    </div>
-    -->
+    
+ 
+    </div> 
 
   </div>
-</div>
-
 </body>
 <script src="scripts/script.js"></script>
 </html>
+
+
+

@@ -25,6 +25,13 @@ const userSchema =  new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "todos"
         }
+    ],
+    
+    notes: [
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref: "notes"
+        }
     ]
 
 
