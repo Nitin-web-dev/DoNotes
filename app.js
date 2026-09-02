@@ -7,6 +7,7 @@ const utils = require("./utils/utils.js");
 const connectDB = require("./config/config.js");
 const usersModel = require("./model/usersModel.js");
 const todoModel = require("./model/todoModel.js");
+const notesModel = require("./model/notesModel.js");
 const isLoggedIn = require('./middleware/IsLoggedIn.js');
 const islogout = require('./middleware/isLogout.js');
 
@@ -17,7 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
-app.get("/SignUp", islogout,function (req, res) {
+app.get('/', islogout,function (req, res){
+    return;
+});
+
+app.get("/SignUp",function (req, res) {
   res.render("signup");
 });
 
@@ -53,7 +58,7 @@ app.post("/SignUp", async function (req, res) {
   }
 });
 
-app.get("/login", islogout,  function (req, res) {
+app.get("/login",   function (req, res) {
   res.render("login");
 });
 
@@ -187,8 +192,18 @@ app.get('/notes', isLoggedIn, async function(req,res){
   try{
     const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
     // console.log(getDatafromEmail)
+    
+    if (!getDatafromEmail) {
+      return res.status(404).send('User not found');
+    }
+
+    const notes = await notesModel.find({
+      user_id: getDatafromEmail._id
+    })
+
     res.render("notes",{
-      userData : getDatafromEmail
+      userData : getDatafromEmail,
+      notes : notes
     });
 
   }catch(error){
@@ -196,6 +211,68 @@ app.get('/notes', isLoggedIn, async function(req,res){
     res.status(404).send('something went wrong')
   }
 } )
+
+
+app.post('/notes',isLoggedIn, async function(req,res){
+  try{
+    const {title, content} = req.body;
+    if(utils.checkIffieldsAreEmpty(req.body)) return res.send('field is empty');
+    const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
+      if (!getDatafromEmail) {
+      return res.status(404).send('User not found');
+    }
+
+    const noteCreated = await notesModel.create({
+      title,
+      content,
+      user_id: getDatafromEmail._id
+    })
+
+    getDatafromEmail.notes.push(noteCreated._id);
+    await getDatafromEmail.save();
+    return res.status(201).redirect('/notes');
+   
+
+  }catch(error){
+    console.error("something went wrong: ", error.message);
+    res.status(404).send('something went wrong')
+  }
+})
+
+app.get('/notes/readmore/:id', isLoggedIn, async function(req,res){
+  try{
+    const getDatafromEmail = await usersModel.findOne({userEmail: req.user.email});
+    // console.log(getDatafromEmail)
+    
+    if (!getDatafromEmail) {
+      return res.status(404).send('User not found');
+    }
+
+    const notes = await notesModel.findOne({
+      _id: req.params.id
+    })
+
+    res.render("notesReadMore",{
+      userData : getDatafromEmail,
+      note : notes
+    });
+
+  }catch(error){
+    console.error("something went wrong: ", error.message);
+    res.status(404).send('something went wrong')
+  }
+} )
+
+app.get('/notes/delete/:id',isLoggedIn,  async function(req,res){
+
+      const note = await notesModel.findOneAndDelete({
+      _id: req.params.id
+      })
+ 
+    res.redirect("/notes");
+})
+
+
 
 
 

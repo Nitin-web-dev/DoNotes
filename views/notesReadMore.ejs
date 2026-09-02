@@ -1,0 +1,49 @@
+<%- include('./partials/header') %>
+    
+
+
+
+
+
+
+<!-- /////// start main section notes  -->
+
+ <div class="max-w-3xl mx-auto px-4 py-10">
+
+        <a href="/notes" class="text-blue-800 ">
+            go back
+        </a>
+     
+     <h2 class="mt-5 text-3xl">Cards</h2>
+    <div class="mt-8 space-y-5">
+     
+      <!-- Card -->
+      <div class="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-700">
+        <h2 class="text-xl font-semibold mb-3">
+          <%= note.title %>
+        </h2>
+
+        <p class=" text-zinc-400 leading-6 mb-5">
+    <%= note.content %>
+        </p>
+
+        <div class="flex items-center gap-3">
+        
+          <a
+          href="/notes/delete/<%= note._id%>"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
+          >
+            Delete
+          </a>
+        </div>
+      </div>
+
+    
+ 
+    </div> 
+
+  </div>
+<%- include('./partials/footer') %>
+
+
+
